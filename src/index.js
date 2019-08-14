@@ -5,9 +5,6 @@ const express = require('express'),
   config = require('./configurations/config'),
   app = express();
 
-//set secret
-app.set('Secret', config.secret);
-
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
@@ -17,39 +14,35 @@ app.use(bodyParser.urlencoded({extended: true}));
 // parse application/json
 app.use(bodyParser.json());
 
-app.listen(3000, () => {
-
-  console.log('server is running on port 3000')
-
-});
-app.get('/', function (req, res) {
-  res.send('Hello world  app is running on http://localhost:3000/');
+app.listen(config.port, () => {
+  console.log(`Server is running on port ${config.port}`)
 });
 
-app.post('/authenticate', (req, res) => {
-  if (req.body.username === 'aymen') {
-    if (req.body.password === 123) {
-      //if eveything is okey let's create our token
+app.post('/authenticate', (request, response) => {
+  const credentials = request.body;
 
+  const foundUser = config.users
+    .find(user => user.username === credentials.username);
+
+  if (foundUser) {
+    if (foundUser.password === credentials.password) {
       const payload = {
         check: true
       };
 
-      var token = jwt.sign(payload, app.get('Secret'), {
-        expiresIn: 1440 // expires in 24 hours
+      const token = jwt.sign(payload, config.secret, {
+        expiresIn: config.expiry
       });
 
-      res.json({
-        message: 'authentication done ',
+      response.json({
+        message: 'authentication done',
         token: token
       });
-
     } else {
-      res.json({message: 'please check your password !'})
+      response.json({message: 'please check your password!'})
     }
-
   } else {
-    res.json({message: 'user not found !'})
+    response.json({message: 'user not found !'})
   }
 })
 
@@ -66,7 +59,7 @@ ProtectedRoutes.use((req, res, next) => {
   if (token) {
 
     // verifies secret and checks if the token is expired
-    jwt.verify(token, app.get('Secret'), (err, decoded) => {
+    jwt.verify(token, config.secret, (err, decoded) => {
       if (err) {
         return res.json({message: 'invalid token'});
       } else {

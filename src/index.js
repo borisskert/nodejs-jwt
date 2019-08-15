@@ -22,15 +22,16 @@ app.listen(config.port, () => {
 app.post('/authenticate', (request, response) => {
   const credentials = request.body;
 
-  try {
-    const token = authentication.authenticate(credentials);
-    response.json({
-      message: 'authentication done',
-      token: token
+  authentication.authenticate(credentials)
+    .then(token => {
+      response.json({
+        message: 'authentication done',
+        token: token
+      });
+    })
+    .catch(error => {
+      response.status(401).json(error)
     });
-  } catch (e) {
-    response.json({message: e.message})
-  }
 })
 
 const protectedRoutes = express.Router();

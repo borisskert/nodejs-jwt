@@ -1,26 +1,39 @@
 const jwt = require('jsonwebtoken');
 const config = require('./configurations/config');
 const users = require('./users')
+const bcrypt = require('bcrypt')
+
+function createToken (username) {
+  const payload = {
+    username
+  };
+
+  return jwt.sign(payload, config.secret, {
+    expiresIn: config.expiry
+  });
+}
 
 module.exports = {
   authenticate: (credentials) => {
-    const foundUser = users.find(credentials.username);
+    return new Promise((resolve, reject) => {
+      const foundUser = users.find(credentials.username);
 
-    if (foundUser) {
-      if (foundUser.password === credentials.password) {
-        const payload = {
-          username: foundUser.username
-        };
-
-        return jwt.sign(payload, config.secret, {
-          expiresIn: config.expiry
+      if (foundUser) {
+        bcrypt.compare(credentials.password, foundUser.password, (error, result) => {
+          if (error) {
+            reject(error)
+          } else if (result) {
+            const token = createToken(foundUser.username)
+            resolve(token)
+          } else {
+            console.log(result)
+            reject('Password incorrect')
+          }
         });
       } else {
-        throw new Error('Password incorrect');
+        reject('User not found');
       }
-    } else {
-      throw new Error('User not found');
-    }
+    });
   },
   verify: (token) => {
     return new Promise((resolve, reject) => {

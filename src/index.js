@@ -3,6 +3,7 @@ const express = require('express'),
   morgan = require('morgan'),
   jwt = require('jsonwebtoken'),
   config = require('./configurations/config'),
+  authenticate = require('./authentication'),
   app = express();
 
 // use morgan to log requests to the console
@@ -21,28 +22,14 @@ app.listen(config.port, () => {
 app.post('/authenticate', (request, response) => {
   const credentials = request.body;
 
-  const foundUser = config.users
-    .find(user => user.username === credentials.username);
-
-  if (foundUser) {
-    if (foundUser.password === credentials.password) {
-      const payload = {
-        check: true
-      };
-
-      const token = jwt.sign(payload, config.secret, {
-        expiresIn: config.expiry
-      });
-
-      response.json({
-        message: 'authentication done',
-        token: token
-      });
-    } else {
-      response.json({message: 'please check your password!'})
-    }
-  } else {
-    response.json({message: 'user not found !'})
+  try {
+    const token = authenticate(credentials);
+    response.json({
+      message: 'authentication done',
+      token: token
+    });
+  } catch (e) {
+    response.json({message: e.message})
   }
 })
 

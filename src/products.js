@@ -1,29 +1,29 @@
-const fs = require('fs');
+const fs = require('fs')
 
 const filename = './products.json'
 
 function initProducts () {
   if (fs.existsSync(filename)) {
-    const content = fs.readFileSync(filename);
-    return JSON.parse(content);
+    const content = fs.readFileSync(filename)
+    return JSON.parse(content)
   }
 
-  return [];
+  return []
 }
 
-const products = initProducts();
+const products = initProducts()
 
 module.exports = {
   getAll: () => {
-    return products;
+    return products
   },
   getById: (id) => {
-    return products.find(product => product.id === id);
+    return products.find(product => product.id === id)
   },
   add: (product) => {
-    products.push(product);
+    products.push(product)
 
     const productsAsJson = JSON.stringify(products)
-    fs.writeFileSync(filename, productsAsJson);
+    fs.writeFileSync(filename, productsAsJson)
   }
-};
+}

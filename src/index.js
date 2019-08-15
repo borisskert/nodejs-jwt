@@ -1,9 +1,8 @@
 const express = require('express'),
   bodyParser = require('body-parser'),
   morgan = require('morgan'),
-  jwt = require('jsonwebtoken'),
   config = require('./configurations/config'),
-  authenticate = require('./authentication'),
+  authentication = require('./authentication'),
   app = express();
 
 // use morgan to log requests to the console
@@ -23,7 +22,7 @@ app.post('/authenticate', (request, response) => {
   const credentials = request.body;
 
   try {
-    const token = authenticate(credentials);
+    const token = authentication.authenticate(credentials);
     response.json({
       message: 'authentication done',
       token: token
@@ -38,33 +37,16 @@ const ProtectedRoutes = express.Router();
 app.use('/api', ProtectedRoutes);
 
 ProtectedRoutes.use((req, res, next) => {
+  const token = req.headers['access-token'];
 
-  // check header for the token
-  var token = req.headers['access-token'];
-
-  // decode token
-  if (token) {
-
-    // verifies secret and checks if the token is expired
-    jwt.verify(token, config.secret, (err, decoded) => {
-      if (err) {
-        return res.json({message: 'invalid token'});
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
-        next();
-      }
-    });
-
-  } else {
-
-    // if there is no token
-
-    res.send({
-      message: 'No token provided.'
-    });
-
-  }
+  authentication.verify(token)
+    .then(decoded => {
+      req.decoded = decoded;
+      next();
+    })
+    .catch(e => {
+      res.json({message: e})
+    })
 });
 
 ProtectedRoutes.get('/getAllProducts', (req, res) => {

@@ -3,6 +3,7 @@ const express = require('express'),
   morgan = require('morgan'),
   config = require('./configurations/config'),
   authentication = require('./authentication'),
+  products = require('./products'),
   app = express();
 
 // use morgan to log requests to the console
@@ -32,11 +33,11 @@ app.post('/authenticate', (request, response) => {
   }
 })
 
-const ProtectedRoutes = express.Router();
+const protectedRoutes = express.Router();
 
-app.use('/api', ProtectedRoutes);
+app.use('/api', protectedRoutes);
 
-ProtectedRoutes.use((req, res, next) => {
+protectedRoutes.use((req, res, next) => {
   const token = req.headers['access-token'];
 
   authentication.verify(token)
@@ -49,17 +50,6 @@ ProtectedRoutes.use((req, res, next) => {
     })
 });
 
-ProtectedRoutes.get('/getAllProducts', (req, res) => {
-  let products = [
-    {
-      id: 1,
-      name: 'cheese'
-    },
-    {
-      id: 2,
-      name: 'carottes'
-    }
-  ]
-
+protectedRoutes.get('/products', (req, res) => {
   res.json(products)
 })

@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const config = require('./configurations/config');
+const users = require('./users')
 
 module.exports = {
   authenticate: (credentials) => {
-    const foundUser = config.users
-      .find(user => user.username === credentials.username);
+    const foundUser = users.find(credentials.username);
 
     if (foundUser) {
       if (foundUser.password === credentials.password) {

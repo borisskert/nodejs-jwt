@@ -64,3 +64,14 @@ protectedRoutes.get('/products/:productId', (req, res) => {
     res.status(404).send();
   }
 });
+
+protectedRoutes.post('/products', (req, res) => {
+  const product = req.body;
+
+  if (product) {
+    products.add(product);
+    res.status(201).send();
+  } else {
+    res.status(400).send();
+  }
+});

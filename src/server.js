@@ -1,19 +1,19 @@
+import { Products } from './products'
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const authentication = require('./authentication')
-import {Products} from './products'
 
 export const Server = () => {
   const app = express()
 
-// use morgan to log requests to the console
+  // use morgan to log requests to the console
   app.use(morgan('dev'))
 
-// parse application/x-www-form-urlencoded
+  // parse application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({ extended: true }))
 
-// parse application/json
+  // parse application/json
   app.use(bodyParser.json())
 
   app.post('/authenticate', (request, response) => {
@@ -48,7 +48,7 @@ export const Server = () => {
       })
   })
 
-  const products = Products();
+  const products = Products()
 
   protectedRoutes.get('/products', (req, res) => {
     res.json(products.getAll())
@@ -76,7 +76,7 @@ export const Server = () => {
     }
   })
 
-  let runningServer;
+  let runningServer
   function listen (port) {
     return new Promise(resolve => {
       runningServer = app.listen(port, () => {
@@ -85,16 +85,16 @@ export const Server = () => {
     })
   }
 
-  function close() {
+  function close () {
     return new Promise(resolve => {
       runningServer.close(() => {
         resolve()
-      });
+      })
     })
   }
 
   return {
     listen,
     close
-  };
+  }
 }

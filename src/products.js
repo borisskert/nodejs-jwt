@@ -27,5 +27,5 @@ export const Products = () => {
       const productsAsJson = JSON.stringify(products)
       fs.writeFileSync(filename, productsAsJson)
     }
-  };
+  }
 }

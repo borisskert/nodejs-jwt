@@ -1,7 +1,7 @@
-const config = require('./configurations/config')
 import { Server } from './server'
+const config = require('./configurations/config')
 
-const server = Server();
+const server = Server()
 
 server.listen(config.port)
   .then((server) => {

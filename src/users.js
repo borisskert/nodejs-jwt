@@ -11,10 +11,12 @@ function initUsers () {
   return []
 }
 
-const users = initUsers()
+export const Users = () => {
+  const users = initUsers()
 
-module.exports = {
-  find: (username) => {
-    return users.find(user => user.username === username)
+  return {
+    find: (username) => {
+      return users.find(user => user.username === username)
+    }
   }
 }

@@ -1,9 +1,9 @@
 import { Server } from './server'
-const config = require('./configurations/config')
+import { properties } from './properties'
 
 const server = Server()
 
-server.listen(config.port)
+server.listen(properties.port)
   .then((server) => {
     console.log(`Server is running on port ${server.address().port}`)
   })

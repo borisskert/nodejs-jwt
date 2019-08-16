@@ -1,8 +1,8 @@
 import { Products } from './products'
+import { authentication } from './authentication'
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
-const authentication = require('./authentication')
 
 export const Server = () => {
   const app = express()

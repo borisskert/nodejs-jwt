@@ -1,6 +1,7 @@
+import { properties } from './properties'
+import { Users } from './users'
+
 const jwt = require('jsonwebtoken')
-const config = require('./configurations/config')
-const users = require('./users')
 const bcrypt = require('bcrypt')
 
 function createToken (username) {
@@ -8,12 +9,14 @@ function createToken (username) {
     username
   }
 
-  return jwt.sign(payload, config.secret, {
-    expiresIn: config.expiry
+  return jwt.sign(payload, properties.secret, {
+    expiresIn: properties.expiry
   })
 }
 
-module.exports = {
+const users = Users()
+
+export const authentication = {
   authenticate: (credentials) => {
     return new Promise((resolve, reject) => {
       const foundUser = users.find(credentials.username)
@@ -38,7 +41,7 @@ module.exports = {
   verify: (token) => {
     return new Promise((resolve, reject) => {
       if (token) {
-        jwt.verify(token, config.secret, (error, decoded) => {
+        jwt.verify(token, properties.secret, (error, decoded) => {
           if (error) {
             reject(new Error('Invalid token'))
           } else {

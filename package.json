@@ -1,15 +1,15 @@
 {
   "name": "nodejs-jwt",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple nodejs backend which is using JWT to secure its api ",
   "main": "src/index.js",
   "scripts": {
     "start": "node -r esm ./src/index.js",
     "lint": "standard \"src/**/*.js\" --fix",
     "test": "ava"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Boris Skert",
+  "license": "Apache-2.0",
   "dependencies": {
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
